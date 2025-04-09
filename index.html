@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sandu Salon | Premium Beauty Experience</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ec4899;
+      --primary-dark: #db2777;
+      --primary-light: #fbcfe8;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+    
+    .gradient-text {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      background-image: linear-gradient(45deg, #ec4899, #f43f5e);
+    }
+    
+    .blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(180deg, rgba(236,72,153,0.1) 0%, rgba(236,72,153,0.05) 100%);
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      filter: blur(30px);
+      z-index: -1;
+      animation: move 25s infinite alternate;
+    }
+    
+    @keyframes move {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(50px, 100px) rotate(180deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    .service-card {
+      transition: all 0.3s ease;
+      border: 1px solid rgba(236,72,153,0.1);
+    }
+    
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(236,72,153,0.1), 0 10px 10px -5px rgba(236,72,153,0.04);
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    #threejs-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body class="bg-pink-50 text-gray-800 font-sans antialiased">
+
+  <!-- Three.js Background -->
+  <div id="threejs-bg"></div>
+
+  <!-- Blob decorations -->
+  <div class="blob top-[-200px] right-[-200px]"></div>
+  <div class="blob bottom-[-200px] left-[-200px]"></div>
+
+  <!-- Header with animated gradient -->
+  <header class="bg-gradient-to-r from-pink-600 to-rose-500 text-white py-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-3xl font-bold">
+          <span class="gradient-text">Sandu Salon</span>
+        </h1>
+      </div>
+      
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8">
+        <a href="#home" class="nav-link text-white hover:text-pink-200 font-medium">මුල් පිටුව</a>
+        <a href="#about" class="nav-link text-white hover:text-pink-200 font-medium">අපි ගැන</a>
+        <a href="#services" class="nav-link text-white hover:text-pink-200 font-medium">සේවා</a>
+        <a href="#pricing" class="nav-link text-white hover:text-pink-200 font-medium">මිල ගණන්</a>
+        <a href="#gallery" class="nav-link text-white hover:text-pink-200 font-medium">ගැලරිය</a>
+        <a href="#testimonials" class="nav-link text-white hover:text-pink-200 font-medium">ප්‍රශංසා</a>
+        <a href="#contact" class="nav-link text-white hover:text-pink-200 font-medium">සම්බන්ධ වන්න</a>
+      </nav>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden bg-pink-700 px-6 py-4">
+      <div class="flex flex-col space-y-4">
+        <a href="#home" class="text-white hover:text-pink-200">මුල් පිටුව</a>
+        <a href="#about" class="text-white hover:text-pink-200">අපි ගැන</a>
+        <a href="#services" class="text-white hover:text-pink-200">සේවා</a>
+        <a href="#pricing" class="text-white hover:text-pink-200">මිල ගණන්</a>
+        <a href="#gallery" class="text-white hover:text-pink-200">ගැලරිය</a>
+        <a href="#testimonials" class="text-white hover:text-pink-200">ප්‍රශංසා</a>
+        <a href="#contact" class="text-white hover:text-pink-200">සම්බන්ධ වන්න</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="relative overflow-hidden">
+    <div class="container mx-auto px-6 py-24 md:py-32 flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 mb-12 md:mb-0">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          <span class="gradient-text">ඔබේ රූපලාවන්‍ය ගමන</span><br>
+          <span class="text-pink-600">අප සමඟ ආරම්භ වේ</span>
+        </h1>
+        <p class="text-lg text-gray-600 mb-8">පළපුරුදු රූපලාවන්‍ය විශේෂඥයින්ගේ සේවාවන් ඔබේ දොරටුවටම. අපගේ නවීන ශෛලීන් සහ තාක්ෂණය ඔබව වෙනස් කරනු ඇත.</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#contact" class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full font-medium transition duration-300 transform hover:scale-105 shadow-lg">
+            ඇණවුම් කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+          <a href="#services" class="border-2 border-pink-600 text-pink-600 hover:bg-pink-50 px-8 py-3 rounded-full font-medium transition duration-300">
+            සේවා ගවේෂණය කරන්න
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2 relative">
+        <!-- Animated p5.js canvas placeholder for hero visual -->
+        <div id="p5-hero-animation" class="w-full h-64 md:h-96 bg-pink-100 rounded-2xl flex items-center justify-center">
+          <p class="text-gray-500">Interactive beauty visualization will appear here</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="bg-white py-12">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="p-6">
+          <div class="text-4xl font-bold text-pink-600 mb-2" id="clients-count">0</div>
+          <div class="text-gray-600">සතුටුදායක ගනුදෙනුකරුවන්</div>
+        </div>
+        <div class="p-6">
+          <div class="text-4xl font-bold text-pink-600 mb-2" id="services-count">0</div>
+          <div class="text-gray-600">විශේෂ සේවා</div>
+        </div>
+        <div class="p-6">
+          <div class="text-4xl font-bold text-pink-600 mb-2" id="years-count">0</div>
+          <div class="text-gray-600">වසර අත්දැකීම්</div>
+        </div>
+        <div class="p-6">
+          <div class="text-4xl font-bold text-pink-600 mb-2" id="staff-count">0</div>
+          <div class="text-gray-600">පළපුරුදු කාර්ය මණ්ඩලය</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-gradient-to-b from-white to-pink-50">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+            <span class="gradient-text">අපගේ කතාව</span>
+          </h2>
+          <p class="text-gray-600 mb-6">2015 දී කුඩා සැලක් ලෙස ආරම්භ වූ Sandu Salon අද කොළඹ ප්‍රමුඛතම රූපලාවන්‍ය සැලක් ලෙස ස්ථාපිත වී ඇත. අපගේ අරමුණ සරලයි - සෑම අයෙකුටම තමන්ගේම ආකර්ශනීය බව දැනෙන ආකාරයට උපකාරී වීම.</p>
+          <p class="text-gray-600 mb-6">අපගේ කණ්ඩායම රූපලාවන්‍ය ක්ෂේත්‍රයේ අවම වශයෙන් වසර 5ක අත්දැකීම් සහිත පළපුරුදු වෘත්තිකයින්ගෙන් සමන්විත වේ. අපි නිතර නවතම තාක්ෂණයන් සහ ශෛලීන් ගැන පුහුණුව ලබා ගන්නෙමු.</p>
+          <div class="flex flex-wrap gap-4">
+            <div class="flex items-center">
+              <div class="bg-pink-100 p-2 rounded-full mr-3">
+                <i class="fas fa-check text-pink-600"></i>
+              </div>
+              <span>100% ස්වභාවික භාවිතය</span>
+            </div>
+            <div class="flex items-center">
+              <div class="bg-pink-100 p-2 rounded-full mr-3">
+                <i class="fas fa-check text-pink-600"></i>
+              </div>
+              <span>සනීපාරක්ෂාව</span>
+            </div>
+            <div class="flex items-center">
+              <div class="bg-pink-100 p-2 rounded-full mr-3">
+                <i class="fas fa-check text-pink-600"></i>
+              </div>
+              <span>පුද්ගලීකරණය කළ සේවා</span>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2 relative">
+          <!-- p5.js canvas for about section animation -->
+          <div id="p5-about-animation" class="w-full h-64 md:h-96 bg-pink-100 rounded-2xl flex items-center justify-center">
+            <p class="text-gray-500">Salon environment visualization will appear here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">අපගේ විශේෂ සේවා</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">අපගේ සම්පූර්ණ රූපලාවන්‍ය සේවා තෝරාගන්න. ඔබේ අවශ්‍යතා සඳහා පරිපූර්ණ විසඳුමක් අප සතුව ඇත.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Service Card 1 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-cut"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">කෙස් කැපීම & ශෛලීකරණය</h3>
+          <p class="text-gray-600 mb-4">පළපුරුදු ශිල්පීන්ගේ අතින් ඔබේ කෙස් විලාසිතාව නවීන ලෙස හැඩගස්වා ගන්න.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+        
+        <!-- Service Card 2 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-spa"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">මුහුණු ආලේපන සහ සායුර්ය</h3>
+          <p class="text-gray-600 mb-4">ඔබේ සමේ ස්වාභාවික බව ආරක්ෂා කරමින් තරුණ බවක් ගෙන ඒම.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+        
+        <!-- Service Card 3 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-paint-brush"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">විවාහක මේකප්</h3>
+          <p class="text-gray-600 mb-4">ඔබේ විශේෂ දිනය සඳහා පෞද්ගලික මේකප් සේවාව.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+        
+        <!-- Service Card 4 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-palette"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">කෙස් වර්ණකරණය</h3>
+          <p class="text-gray-600 mb-4">ඔබේ විලාසිතාවට ගැලපෙන වර්ණයන් සමඟ පරිපූර්ණ බවට පත් කරන්න.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+        
+        <!-- Service Card 5 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-hand-sparkles"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">නියපොත්තු සැකසීම</h3>
+          <p class="text-gray-600 mb-4">පරිපූර්ණ නියපොත්තු සැකසීම් සඳහා වෘත්තීය සේවාව.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+        
+        <!-- Service Card 6 -->
+        <div class="service-card bg-white rounded-xl p-8 shadow-md">
+          <div class="text-pink-600 text-4xl mb-4">
+            <i class="fas fa-gem"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">VIP සේවා පැකේජ</h3>
+          <p class="text-gray-600 mb-4">විශේෂ රූපලාවන්‍ය අත්දැකීම් සඳහා පුද්ගලීකරණය කළ පැකේජ.</p>
+          <a href="#" class="text-pink-600 font-medium inline-flex items-center">
+            තවත් ගවේෂණය කරන්න <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="py-20 bg-gradient-to-b from-pink-50 to-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">පාරිභෝගික-හිතකාමී මිල ගණන්</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">ඔබේ අයවැයට ගැලපෙන විවිධ මිල ගණන්. අපගේ සේවාවන් සඳහා වටිනාකම් ගවේෂණය කරන්න.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <!-- Basic Package -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-105">
+          <div class="bg-pink-100 py-6 px-8">
+            <h3 class="text-xl font-bold text-gray-800">මූලික පැකේජය</h3>
+            <div class="mt-4">
+              <span class="text-4xl font-bold text-pink-600">රු. 3,500</span>
+              <span class="text-gray-600">/ සැසිය</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>කෙස් කැපීම සහ ශෛලීකරණය</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>මූලික මුහුණු ආලේපනය</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>නියපොත්තු සැකසීම</span>
+              </li>
+              <li class="flex items-start text-gray-400">
+                <i class="fas fa-times mt-1 mr-3"></i>
+                <span>වර්ණකරණය ඇතුළත් නොවේ</span>
+              </li>
+            </ul>
+            <button class="w-full mt-8 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition duration-300">
+              ඇණවුම් කරන්න
+            </button>
+          </div>
+        </div>
+        
+        <!-- Premium Package (Featured) -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden transform transition-all hover:scale-105 border-2 border-pink-500 relative">
+          <div class="absolute top-0 right-0 bg-pink-600 text-white px-4 py-1 text-sm font-bold rounded-bl-lg">
+            ජනප්‍රිය
+          </div>
+          <div class="bg-pink-600 py-6 px-8">
+            <h3 class="text-xl font-bold text-white">වාරික පැකේජය</h3>
+            <div class="mt-4">
+              <span class="text-4xl font-bold text-white">රු. 12,000</span>
+              <span class="text-pink-200">/ මාස 3</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>කෙස් කැපීම සහ ශෛලීකරණය (සැසි 4)</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>පූර්ණ මුහුණු ආලේපනය (සැසි 2)</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>නියපොත්තු සැකසීම (සැසි 4)</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>මූලික වර්ණකරණය ඇතුළත්</span>
+              </li>
+            </ul>
+            <button class="w-full mt-8 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition duration-300">
+              ඇණවුම් කරන්න
+            </button>
+          </div>
+        </div>
+        
+        <!-- VIP Package -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-105">
+          <div class="bg-pink-100 py-6 px-8">
+            <h3 class="text-xl font-bold text-gray-800">VIP පැකේජය</h3>
+            <div class="mt-4">
+              <span class="text-4xl font-bold text-pink-600">රු. 25,000</span>
+              <span class="text-gray-600">/ මාස 6</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>සියලුම මූලික සේවා</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>පුද්ගලීකරණය කළ රූපලාවන්‍ය උපදෙස්</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>ප්‍රමුඛතා නිවේදනය</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-pink-600 mt-1 mr-3"></i>
+                <span>නිවසේදී සේවා (කොළඹ පමණක්)</span>
+              </li>
+            </ul>
+            <button class="w-full mt-8 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition duration-300">
+              ඇණවුම් කරන්න
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-12 text-center">
+        <p class="text-gray-600 mb-4">තවත් විශේෂ මිල ගණන් ගවේෂණය කිරීමට?</p>
+        <a href="#" class="inline-flex items-center text-pink-600 font-medium">
+          සම්පූර්ණ මිල ගණන් ලැයිස්තුව බලන්න <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">අපගේ කාර්යයන්</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">අපගේ කාර්ය මණ්ඩලය විසින් නිම කරන ලද රූපලාවන්‍ය කෘතීන් ගවේෂණය කරන්න.</p>
+      </div>
+      
+      <!-- Gallery Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Gallery items will be dynamically loaded here -->
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 1</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 2</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 3</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 4</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 5</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 6</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 7</p>
+        </div>
+        <div class="gallery-item bg-pink-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center">
+          <p class="text-gray-500">Gallery image 8</p>
+        </div>
+      </div>
+      
+      <div class="text-center mt-12">
+        <button class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full font-medium transition duration-300">
+          තවත් බලන්න <i class="fas fa-images ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gradient-to-b from-white to-pink-50">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">අපගේ ගනුදෙනුකරුවන්ගේ ප්‍රශංසා</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Sandu Salon සමඟ ඔවුන්ගේ අත්දැකීම් ගැන අපගේ ගනුදෙනුකරුවන් කියන දේ.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="bg-white p-8 rounded-xl shadow-md">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 font-bold mr-4">ස</div>
+            <div>
+              <h4 class="font-bold">සුනේත්‍රා පෙරේරා</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"මගේ විවාහය සඳහා මේකප් සහ හාර් ස්ටයිල් කිරීමට Sandu Salon තෝරා ගැනීම මගේ හොඳම තීරණය විය. ඔවුන් මා අපේක්ෂා කළාට වඩා ඉහළින් සිටියා!"</p>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="bg-white p-8 rounded-xl shadow-md">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 font-bold mr-4">න</div>
+            <div>
+              <h4 class="font-bold">නිරෝෂන් ප්‍රනාන්දු</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"පිරිමින්ගේ කෙස් කැපීම සඳහා මම සෑම විටම Sandu Salon වෙත යනවා. ඔවුන්ගේ ශිල්පීන් නවීන ශෛලීන් ගැන හොඳින් දන්නා අතර සෑම විටම මගේ අවශ්‍යතා අවබෝධ කර ගනී."</p>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="bg-white p-8 rounded-xl shadow-md">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 font-bold mr-4">ම</div>
+            <div>
+              <h4 class="font-bold">මානෙල් සිල්වා</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"මම මගේ මුහුණු ආලේපන සැසිය සඳහා වාරික පැකේජයක් ගත්තා. මගේ සම ඉතා සුව පහසුවෙන් සහ තරුණ බවක් ගෙන ආවා. කාර්ය මණ්ඩලය ඉතා වෘත්තීය සහ මිත්‍රශීලී ය."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">අපගේ පළපුරුදු කණ්ඩායම</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">ඔබේ රූපලාවන්‍ය අවශ්‍යතා සඳහා කැපවූ අපගේ වෘත්තීය කාර්ය මණ්ඩලය හමුවන්න.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Team Member 1 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all hover:shadow-lg">
+          <div class="bg-pink-100 h-64 flex items-center justify-center">
+            <p class="text-gray-500">Stylist photo</p>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold">සඳුනි පෙරේරා</h3>
+            <p class="text-pink-600 mb-4">ප්‍රධාන ශෛලීකරණ ශිල්පිනිය</p>
+            <p class="text-gray-600 text-sm">වසර 10ක අත්දැකීම් සහිතව, සඳුනි නවතම රූපලාවන්‍ය ප්‍රවණතා ගැන දැනුම් ඇති අතර ඔබේ පෞරුෂයට ගැලපෙන ශෛලීන් නිර්මාණය කරයි.</p>
+            <div class="flex mt-4 space-x-3">
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team Member 2 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all hover:shadow-lg">
+          <div class="bg-pink-100 h-64 flex items-center justify-center">
+            <p class="text-gray-500">Stylist photo</p>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold">රවින්ද්‍ර ගුණසේකර</h3>
+            <p class="text-pink-600 mb-4">වර්ණකරණ විශේෂඥ</p>
+            <p class="text-gray-600 text-sm">වසර 8ක අත්දැකීම් සහිත රවින්ද්‍ර, කෙස් වර්ණකරණය සහ සිහින් විලාසිතාවන්හි විශේෂඥයෙකි. ඔහු සෑම ගනුදෙනුකරුවෙකුගේම ස්වභාවය අවබෝධ කර ගන්නා අතර එයට ගැලපෙන වර්ණ තෝරා ගනී.</p>
+            <div class="flex mt-4 space-x-3">
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team Member 3 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all hover:shadow-lg">
+          <div class="bg-pink-100 h-64 flex items-center justify-center">
+            <p class="text-gray-500">Stylist photo</p>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold">මායා ද සිල්වා</h3>
+            <p class="text-pink-600 mb-4">සායුර්ය උපදේශක</p>
+            <p class="text-gray-600 text-sm">මායා ඇයගේ සායුර්ය ඥානය සහ ස්වාභාවික ආලේපන ක්‍රම සඳහා ප්‍රසිද්ධය. ඇය සෑම ගනුදෙනුකරුවෙකුටම පුද්ගලීකරණය කළ සම රැකවරණ සැලැස්මක් නිර්මාණය කරයි.</p>
+            <div class="flex mt-4 space-x-3">
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team Member 4 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all hover:shadow-lg">
+          <div class="bg-pink-100 h-64 flex items-center justify-center">
+            <p class="text-gray-500">Stylist photo</p>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold">දිලාන් ප්‍රනාන්දු</h3>
+            <p class="text-pink-600 mb-4">පිරිමි ශෛලීකරණ ශිල්පියා</p>
+            <p class="text-gray-600 text-sm">පිරිමින්ගේ කෙස් ශෛලීකරණය සහ රැකවරණය සඳහා විශේෂඥ දිලාන්, නවීන සහ සම්භාව්‍ය ශෛලීන් දෙකම සඳහා ප්‍රසිද්ධය.</p>
+            <div class="flex mt-4 space-x-3">
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section class="py-16 bg-gradient-to-r from-pink-600 to-rose-500 text-white">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">ඔබේ රූපලාවන්‍ය අත්දැකීම සකස් කර ගන්න</h2>
+      <p class="text-xl mb-8 max-w-3xl mx-auto">අදම ඔබේ නියමිත සැසිය වෙන්කර ගන්න. අපගේ කණ්ඩායම ඔබව ගැනීමට සුදානම්.</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#contact" class="bg-white text-pink-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium transition duration-300 transform hover:scale-105 shadow-lg">
+          අමතන්න <i class="fas fa-phone-alt ml-2"></i>
+        </a>
+        <a href="#" class="border-2 border-white text-white hover:bg-pink-700 px-8 py-3 rounded-full font-medium transition duration-300">
+          WhatsApp <i class="fab fa-whatsapp ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col lg:flex-row gap-12">
+        <div class="lg:w-1/2">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+            <span class="gradient-text">අපව සම්බන්ධ කර ගන්න</span>
+          </h2>
+          <p class="text-gray-600 mb-8">ඔබට ඇති ඕනෑම ප්‍රශ්නයක් හෝ ඇණවුමක් සඳහා පහත පෝරමය පුරවන්න. අපි ඔබට ඉක්මනින් පිළිතුරු දෙන්නෙමු.</p>
+          
+          <div class="space-y-6">
+            <div class="flex items-start">
+              <div class="bg-pink-100 p-3 rounded-full mr-4">
+                <i class="fas fa-map-marker-alt text-pink-600"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">ලිපිනය</h4>
+                <p class="text-gray-600">123 රූපලාවන්‍ය වීදිය, කොළඹ 03, ශ්‍රී ලංකාව</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="bg-pink-100 p-3 rounded-full mr-4">
+                <i class="fas fa-phone-alt text-pink-600"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">ඇමතුම් කරන්න</h4>
+                <p class="text-gray-600">+94 76 123 4567 (WhatsApp available)</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="bg-pink-100 p-3 rounded-full mr-4">
+                <i class="fas fa-envelope text-pink-600"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">Email</h4>
+                <p class="text-gray-600">info@sandusalon.lk</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="bg-pink-100 p-3 rounded-full mr-4">
+                <i class="fas fa-clock text-pink-600"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">වැඩ කාලය</h4>
+                <p class="text-gray-600">ඉරිදා සිට සිකුරාදා<br>පෙ.ව. 9:00 - ප.ව. 7:00</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-8">
+            <h4 class="font-bold text-gray-800 mb-4">සමාජ මාධ්‍ය</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="bg-pink-100 hover:bg-pink-200 w-10 h-10 rounded-full flex items-center justify-center text-pink-600">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="bg-pink-100 hover:bg-pink-200 w-10 h-10 rounded-full flex items-center justify-center text-pink-600">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="bg-pink-100 hover:bg-pink-200 w-10 h-10 rounded-full flex items-center justify-center text-pink-600">
+                <i class="fab fa-youtube"></i>
+              </a>
+              <a href="#" class="bg-pink-100 hover:bg-pink-200 w-10 h-10 rounded-full flex items-center justify-center text-pink-600">
+                <i class="fab fa-tiktok"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2">
+          <form class="bg-pink-50 rounded-xl p-8 shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="name" class="block text-gray-700 font-medium mb-2">ඔබේ නම</label>
+                <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="ඔබේ සම්පූර්ණ නම">
+              </div>
+              <div>
+                <label for="email" class="block text-gray-700 font-medium mb-2">Email ලිපිනය</label>
+                <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="ඔබගේ email ලිපිනය">
+              </div>
+              <div>
+                <label for="phone" class="block text-gray-700 font-medium mb-2">දුරකථන අංකය</label>
+                <input type="tel" id="phone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="ඔබගේ දුරකථන අංකය">
+              </div>
+              <div>
+                <label for="service" class="block text-gray-700 font-medium mb-2">සේවාව</label>
+                <select id="service" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                  <option value="">සේවාව තෝරන්න</option>
+                  <option value="haircut">කෙස් කැපීම</option>
+                  <option value="facial">මුහුණු ආලේපන</option>
+                  <option value="makeup">මේකප්</option>
+                  <option value="coloring">වර්ණකරණය</option>
+                  <option value="other">වෙනත්</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mt-6">
+              <label for="message" class="block text-gray-700 font-medium mb-2">පණිවිඩය</label>
+              <textarea id="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="ඔබගේ පණිවිඩය"></textarea>
+            </div>
+            
+            <button type="submit" class="w-full mt-6 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-medium transition duration-300">
+              පණිවිඩය යවන්න <i class="fas fa-paper-plane ml-2"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="h-96 bg-gray-200">
+    <div class="h-full flex items-center justify-center">
+      <p class="text-gray-500">Interactive map will appear here</p>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 bg-pink-50">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <span class="gradient-text">නිතර අසන ප්‍රශ්න</span>
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">ඔබට ඇති ගැටළු විසඳා ගැනීමට අපගේ පොදු ප්‍රශ්න සහ පිළිතුරු ගවේෂණය කරන්න.</p>
+      </div>
+      
+      <div class="max-w-3xl mx-auto">
+        <!-- FAQ Item 1 -->
+        <div class="mb-6 border-b border-pink-200 pb-6">
+          <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-pink-600 focus:outline-none">
+            <span>මම මගේ නියමිත සැසිය කොපමණ කල්කරා ගත යුතුද?</span>
+            <i class="fas fa-chevron-down text-pink-600 transition-transform duration-300"></i>
+          </button>
+          <div class="faq-answer mt-4 text-gray-600 hidden">
+            <p>අපි ඔබේ නියමිත කාලයට 10-15 මිනිත්තු කල්කරා එන ලෙස නිර්දේශ කරමු. මෙය ඔබගේ සේවාව සඳහා අපට සූදානම් වීමට සහ ඔබගේ අත්දැකීම පරිපූර්ණ කිරීමට ඉඩ ලබා දෙයි.</p>
+          </div>
+        </div>
+        
+        <!-- FAQ Item 2 -->
+        <div class="mb-6 border-b border-pink-200 pb-6">
+          <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-pink-600 focus:outline-none">
+            <span>ඔබ සායුර්ය නිෂ්පාදන විකිණීම කරනවාද?</span>
+            <i class="fas fa-chevron-down text-pink-600 transition-transform duration-300"></i>
+          </button>
+          <div class="faq-answer mt-4 text-gray-600 hidden">
+            <p>ඔව්, අපි ඔබේ රූපලාවන්‍ය අවශ්‍යතා සඳහා උසස් තත්ත්වයේ සායුර්ය නිෂ්පාදන තෝරාගත් පරාසයක් ඉදිරිපත් කරමු. අපගේ කණ්ඩායම ඔබට නිවැරදි නිෂ්පාදන තෝරා ගැනීමට උපදෙස් දෙනු ඇත.</p>
+          </div>
+        </div>
+        
+        <!-- FAQ Item 3 -->
+        <div class="mb-6 border-b border-pink-200 pb-6">
+          <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-pink-600 focus:outline-none">
+            <span>මට මගේ නියමිත සැසිය අවලංගු කිරීමට හෝ නැවත සකස් කිරීමට හැකිද?</span>
+            <i class="fas fa-chevron-down text-pink-600 transition-transform duration-300"></i>
+          </button>
+          <div class="faq-answer mt-4 text-gray-600 hidden">
+            <p>ඔව්, ඔබට ඔබේ නියමිත සැසිය අවලංගු කිරීමට හෝ නැවත සකස් කිරීමට හැකිය. කෙසේ වෙතත්, අවම වශයෙන් සැසියට පැය 24කට පෙර දැනුම් දිය යුතුය. පැය 24ක් ඇතුළත අවලංගු කිරීම් සඳහා ගාස්තු අය කළ හැකිය.</p>
+          </div>
+        </div>
+        
+        <!-- FAQ Item 4 -->
+        <div class="mb-6 border-b border-pink-200 pb-6">
+          <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-pink-600 focus:outline-none">
+            <span>ඔබේ සැලේ රැඳවුම් පහසුකම් තිබේද?</span>
+            <i class="fas fa-chevron-down text-pink-600 transition-transform duration-300"></i>
+          </button>
+          <div class="faq-answer mt-4 text-gray-600 hidden">
+            <p>ඔව්, අපගේ සැලේ නවීන රැඳවුම් පහසුකම්, නිදහස් Wi-Fi සහ ආරාමික බීම සපයනු ලැබේ. අපගේ රැඳවුම් කාමරය ඔබේ රැඳීම සුවපහසු කරයි.</p>
+          </div>
+        </div>
+        
+        <!-- FAQ Item 5 -->
+        <div class="mb-6">
+          <button class="faq-question flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-pink-600 focus:outline-none">
+            <span>මම විශේෂ අවශ්‍යතා සහිත විශේෂ සේවාවක් අවශ්‍ය නම් කුමක් කළ යුතුද?</span>
+            <i class="fas fa-chevron-down text-pink-600 transition-transform duration-300"></i>
+          </button>
+          <div class="faq-answer mt-4 text-gray-600 hidden">
+            <p>ඔබට විශේෂ අවශ්‍යතා ඇත්නම්, කරුණාකර අපව සම්බන්ධ කර ගන්න. අපගේ කණ්ඩායම ඔබගේ අවශ්‍යතා සාකච්ඡා කර පුද්ගලීකරණය කළ විසඳුමක් සැපයීමට සතුටු වනු ඇත. ඔබට අපගේ සම්බන්ධතා පෝරමය හරහා හෝ අපගේ දුරකථන අංකයට කෙලින්ම ඇමතුම් කිරීමෙන් අපව සම්බන්ධ කර ගත හැකිය.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="py-16 bg-gradient-to-r from-pink-600 to-rose-500 text-white">
+    <div class="container mx-auto px-6 text-center">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">අපගේ පැමිණෙන විශේෂ දීමනා සඳහා ලියාපදිංචි වන්න</h2>
+        <p class="text-xl mb-8">අපගේ නවතම ප්‍රවර්ධන, විශේෂ දීමනා සහ රූපලාවන්‍ය උපදෙස් ගැන දැනුවත් වීමට අපගේ වාර්තාලයට ලියාපදිංචි වන්න.</p>
+        <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+          <input type="email" placeholder="ඔබගේ email ලිපිනය" class="flex-grow px-6 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300">
+          <button type="submit" class="bg-white text-pink-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium transition duration-300 shadow-lg">
+            ලියාපදිංචි වන්න <i class="fas fa-paper-plane ml-2"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white pt-16 pb-8">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div>
+          <h3 class="text-2xl font-bold mb-6">
+            <span class="gradient-text">Sandu Salon</span>
+          </h3>
+          <p class="text-gray-400 mb-6">ඔබේ රූපලාවන්‍ය ගමන අප සමඟ ආරම්භ වේ. අපගේ පළපුරුදු කණ්ඩායම ඔබගේ ආලංකාරය සහ සුවපහසුව සඳහා කැපවී සිටී.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-6">සේවා</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white">කෙස් කැපීම</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">මුහුණු ආලේපන</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">මේකප් සේවා</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">කෙස් වර්ණකරණය</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">නියපොත්තු සැකසීම</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-6">සබැඳි</h4>
+          <ul class="space-y-3">
+            <li><a href="#about" class="text-gray-400 hover:text-white">අපි ගැන</a></li>
+            <li><a href="#services" class="text-gray-400 hover:text-white">සේවා</a></li>
+            <li><a href="#pricing" class="text-gray-400 hover:text-white">මිල ගණන්</a></li>
+            <li><a href="#gallery" class="text-gray-400 hover:text-white">ගැලරිය</a></li>
+            <li><a href="#contact" class="text-gray-400 hover:text-white">සම්බන්ධ වන්න</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-6">සම්බන්ධ වන්න</h4>
+          <ul class="space-y-3 text-gray-400">
+            <li class="flex items-start">
+              <i class="fas fa-map-marker-alt mt-1 mr-3 text-pink-500"></i>
+              <span>123 රූපලාවන්‍ය වීදිය, කොළඹ 03, ශ්‍රී ලංකාව</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-phone-alt mt-1 mr-3 text-pink-500"></i>
+              <span>+94 76 123 4567</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-envelope mt-1 mr-3 text-pink-500"></i>
+              <span>info@sandusalon.lk</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-clock mt-1 mr-3 text-pink-500"></i>
+              <span>ඉරිදා සිට සිකුරාදා<br>පෙ.ව. 9:00 - ප.ව. 7:00</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 mb-4 md:mb-0">&copy; 2025 Sandu Salon. සියලු හිමිකම් ඇවිරිණි.</p>
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white">පෞද්ගලිකත්වය</a>
+          <a href="#" class="text-gray-400 hover:text-white">නියම</a>
+          <a href="#" class="text-gray-400 hover:text-white">කුකීස්</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 bg-pink-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-pink-700 transition duration-300 hidden">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // FAQ accordion
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+      question.addEventListener('click', () => {
+        const answer = question.nextElementSibling;
+        const icon = question.querySelector('i');
+        
+        answer.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+      });
+    });
+    
+    // Back to top button
+    const backToTopButton = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.remove('hidden');
+      } else {
+        backToTopButton.classList.add('hidden');
+      }
+    });
+    
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Animated counters
+    function animateCounter(id, target, duration = 2000) {
+      const element = document.getElementById(id);
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = start;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          clearInterval(timer);
+          current = target;
+        }
+        element.textContent = Math.floor(current);
+      }, 16);
+    }
+    
+    // Initialize counters when section is in view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter('clients-count', 1250);
+          animateCounter('services-count', 18);
+          animateCounter('years-count', 10);
+          animateCounter('staff-count', 8);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    observer.observe(document.querySelector('#about'));
+    
+    // Three.js background
+    const threejsBg = document.getElementById('threejs-bg');
+    
+    if (threejsBg) {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      threejsBg.appendChild(renderer.domElement);
+      
+      // Create floating particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particleCount = 500;
+      
+      const posArray = new Float32Array(particleCount * 3);
+      
+      for(let i = 0; i < particleCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+      }
+      
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.02,
+        color: 0xec4899,
+        transparent: true,
+        opacity: 0.8
+      });
+      
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+      
+      camera.position.z = 3;
+      
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        particlesMesh.rotation.x += 0.0005;
+        particlesMesh.rotation.y += 0.0005;
+        
+        renderer.render(scene, camera);
+      }
+      
+      animate();
+      
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+    
+    // p5.js animations
+    const p5Hero = new p5((sketch) => {
+      sketch.setup = () => {
+        const canvas = sketch.createCanvas(
+          document.getElementById('p5-hero-animation').offsetWidth,
+          document.getElementById('p5-hero-animation').offsetHeight
+        );
+        canvas.parent('p5-hero-animation');
+        sketch.noStroke();
+      };
+      
+      sketch.draw = () => {
+        sketch.clear();
+        sketch.background(254, 242, 242, 10);
+        
+        // Draw abstract shapes representing beauty services
+        for(let i = 0; i < 5; i++) {
+          sketch.fill(236, 72, 153, 50);
+          sketch.ellipse(
+            sketch.width/2 + sketch.sin(sketch.frameCount * 0.01 + i) * 100,
+            sketch.height/2 + sketch.cos(sketch.frameCount * 0.01 + i) * 50,
+            100 + sketch.sin(sketch.frameCount * 0.02 + i) * 50
+          );
+        }
+      };
+      
+      sketch.windowResized = () => {
+        sketch.resizeCanvas(
+          document.getElementById('p5-hero-animation').offsetWidth,
+          document.getElementById('p5-hero-animation').offsetHeight
+        );
+      };
+    });
+    
+    const p5About = new p5((sketch) => {
+      sketch.setup = () => {
+        const canvas = sketch.createCanvas(
+          document.getElementById('p5-about-animation').offsetWidth,
+          document.getElementById('p5-about-animation').offsetHeight
+        );
+        canvas.parent('p5-about-animation');
+      };
+      
+      sketch.draw = () => {
+        sketch.clear();
+        sketch.background(254, 242, 242);
+        
+        // Draw abstract representation of salon tools
+        sketch.fill(236, 72, 153);
+        sketch.ellipse(sketch.width/3, sketch.height/2, 80);
+        
+        sketch.fill(244, 114, 182);
+        sketch.rect(sketch.width/2, sketch.height/3, 60, 60, 10);
+        
+        sketch.fill(219, 39, 119);
+        sketch.triangle(
+          sketch.width*2/3, sketch.height/2,
+          sketch.width*2/3 + 50, sketch.height/2 + 80,
+          sketch.width*2/3 - 50, sketch.height/2 + 80
+        );
+      };
+      
+      sketch.windowResized = () => {
+        sketch.resizeCanvas(
+          document.getElementById('p5-about-animation').offsetWidth,
+          document.getElementById('p5-about-animation').offsetHeight
+        );
+      };
+    });
+    
+    // ScrollReveal animations
+    ScrollReveal().reveal('section', {
+      delay: 200,
+      distance: '50px',
+      origin: 'bottom',
+      interval: 100,
+      easing: 'ease-in-out'
+    });
+    
+    ScrollReveal().reveal('.service-card', {
+      delay: 200,
+      distance: '50px',
+      origin: 'bottom',
+      interval: 100,
+      easing: 'ease-in-out'
+    });
+  </script>
+</body>
+</html>
